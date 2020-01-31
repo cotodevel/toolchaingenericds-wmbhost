@@ -327,14 +327,16 @@ unsigned char * RXNextFrame(int *size){
 		rx_count--;
 		i -= j;
 		if (i<0) i+=64;
-		data = rx_queue[i] + 12;
-		fs = *((unsigned short *)&rx_queue[i][8]);
-		if (fs > 0) {
-			*size = fs;
-			return data;
-		}
-		else {
-			return NULL;
+		if(i < sizeof(rx_queue)){
+			data = rx_queue[i] + 12;
+			unsigned short * thisPtr = (unsigned short *)&rx_queue[i][8];
+			if(thisPtr != NULL){
+				fs = *(thisPtr);
+				if (fs > 0) {	
+					*size = fs;
+					return data;
+				}	
+			}
 		}
 	}
 	return NULL;
