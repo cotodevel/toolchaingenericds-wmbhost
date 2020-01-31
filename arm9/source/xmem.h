@@ -52,6 +52,8 @@ extern void Xfree(const void *ptr);
 // return the amount of free mem
 extern unsigned int XMEM_FreeMem(void);
 
+extern unsigned int XMEMTOTALSIZE;
+
 #ifdef __cplusplus
 }
 #endif

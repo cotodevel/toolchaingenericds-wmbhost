@@ -429,7 +429,7 @@ void InitRSA(struct nds_rsaframe *rsa){
 	rsa->unk38 = 1;
 }
 
-unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsaframe *rsa, tNDSHeader *ndsh, u8* data){
+unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsaframe *rsa, tNDSHeader *ndsh, FILE * fileHandle){	//u8* data
 	unsigned char head[] = {
 		0x28, 0x02, 0x00, 0x02, 0x03, 0x09, 0xBF, 0x00, 0x00, 0x00, 0x00, 0x12, 0x17, 0x91, 0x92, 0x28,
 		0x00, 0x12, 0x17, 0x91, 0x92, 0x28, 0x60, 0x23, 0x06, 0x01, 0x02, 0x00, 0xFF, 0x11, 0x04, 0x00,
@@ -473,9 +473,15 @@ unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsa
 		// data size in words...
 		d[0x1C] = 0xB3;
 
-
+		/*
 		//RF_read(&d[0x23], 0x160, f);
-		for(k=0;k<0x160;k++) { d[0x23+k] = data[k]; }
+		for(k=0;k<0x160;k++) { 
+			d[0x23+k] = data[k]; 
+		}
+		*/
+		fseek(fileHandle, seq, SEEK_SET);
+		fread((u8*)&d[0x23], 1, (int)0x160, fileHandle);
+		
 		d[0x23+0x160] = 0;
 		d[0x23+0x161] = 2;
 		d[0x23+0x162] = 0;
@@ -496,7 +502,15 @@ unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsa
 			d[0x1C] = 0xFF;
 			//RF_setpos(f,ndsh->arm9romSource+((seq-1)*504));
 			//RF_read(&d[0x23], 504, f);
-			for(k=0;k<504;k++) { d[0x23+k] = data[(ndsh->arm9romSource+((seq-1)*504))+k]; }
+			
+			/*
+			for(k=0;k<504;k++) { 
+				d[0x23+k] = data[(ndsh->arm9romSource+((seq-1)*504))+k]; 
+			}
+			*/
+			fseek(fileHandle, (ndsh->arm9romSource+((seq-1)*504)), SEEK_SET);
+			fread((u8*)&d[0x23], 1, (int)504, fileHandle);
+		
 			d[0x23+504] = 0;
 			d[0x23+505] = 2;
 			d[0x23+506] = 0;			
@@ -508,7 +522,13 @@ unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsa
 			if (ts&1) ts++; // make it even
 			//RF_setpos(f,ndsh->arm9romSource+((seq-1)*504));
 			//RF_read(&d[0x23], ts, f);
-			for(k=0;k<ts;k++) { d[0x23+k] = data[(ndsh->arm9romSource+((seq-1)*504))+k]; }
+			/*
+			for(k=0;k<ts;k++) { 
+				d[0x23+k] = data[(ndsh->arm9romSource+((seq-1)*504))+k]; 
+			}*/
+			fseek(fileHandle, (ndsh->arm9romSource+((seq-1)*504)), SEEK_SET);
+			fread((u8*)&d[0x23], 1, (int)ts, fileHandle);
+			
 			d[0x1C] = (6+ts)/2;
 			d[0x23+ts] = 0;
 			d[0x23+ts+1] = 2;
@@ -531,7 +551,13 @@ unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsa
 			d[0x1C] = 0xFF;
 			//RF_setpos(f,ndsh->arm7romSource+((seq-arm7s)*504));
 			//RF_read(&d[0x23], 504, f);
-			for(k=0;k<504;k++) { d[0x23+k] = data[(ndsh->arm7romSource+((seq-arm7s)*504))+k]; }
+			/*
+			for(k=0;k<504;k++) { 
+				d[0x23+k] = data[(ndsh->arm7romSource+((seq-arm7s)*504))+k]; 
+			}*/
+			fseek(fileHandle, (ndsh->arm7romSource+((seq-arm7s)*504)), SEEK_SET);
+			fread((u8*)&d[0x23], 1, (int)504, fileHandle);
+			
 			d[0x23+504] = 0;
 			d[0x23+505] = 2;
 			d[0x23+506] = 0;			
@@ -543,7 +569,14 @@ unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsa
 			if (ts&1) ts++; // make it even
 			//RF_setpos(f,ndsh->arm7romSource+((seq-arm7s)*504));
 			//RF_read(&d[0x23], ts, f);
-			for(k=0;k<ts;k++) { d[0x23+k] = data[(ndsh->arm7romSource+((seq-arm7s)*504))+k]; }
+			/*
+			for(k=0;k<ts;k++) { 
+				d[0x23+k] = data[(ndsh->arm7romSource+((seq-arm7s)*504))+k]; 
+			}
+			*/
+			fseek(fileHandle, (ndsh->arm7romSource+((seq-arm7s)*504)), SEEK_SET);
+			fread((u8*)&d[0x23], 1, (int)ts, fileHandle);
+			
 			d[0x1C] = (6+ts)/2;
 			d[0x23+ts] = 0;
 			d[0x23+ts+1] = 2;
@@ -577,7 +610,7 @@ void WMB_Main() {
 	int i, ds, j=0, k;
 	unsigned char *datapkt;
 	struct nds_rsaframe *rsa;
-	unsigned char *nds_data;
+	static FILE * ndsBinary = NULL;	//unsigned char *nds_data;
 	tNDSHeader *nds_head;
 	tNDSBanner *banner;
 	unsigned char *d,*dr;
@@ -623,7 +656,7 @@ void WMB_Main() {
 	clrscr();
 	printf("* - ");
 	printf("* Press (A) to load a file from SLOT-1. ");
-	printf("* Must be 1.5MB or less ");
+	printf("* There are no memory constraints. ");
 	
 	printf("* Press (B) to continue. ");
 	
@@ -637,13 +670,17 @@ void WMB_Main() {
 		}
 	}
 	
+	if(ndsBinary != NULL){
+		fclose(ndsBinary);
+	}
+	
 	char startPath[MAX_TGDSFILENAME_LENGTH+1];
 	strcpy(startPath,"/");
 	while( ShowBrowser((char *)startPath, (char *)&curChosenBrowseFile[0]) == true ){	//as long you keep using directories ShowBrowser will be true
 		
 	}
 	
-	nds_data = (u8*)R_LoadFile(curChosenBrowseFile, NULL);
+	ndsBinary = fopen(curChosenBrowseFile, "r");	//nds_data = (u8*)R_LoadFile(curChosenBrowseFile, NULL);
 	
 	printf("* Initializing data...");
 	dataacked = (unsigned char *) Xcalloc(65535,1);
@@ -676,7 +713,14 @@ void WMB_Main() {
 	
 	d = (unsigned char *) (unsigned int) nds_head;
 	
-	for(i=0;(unsigned)i<sizeof(tNDSHeader);i++) d[i] = nds_data[i];
+	//read NDSHeader
+	/*
+	for(i=0; (unsigned)i<sizeof(tNDSHeader);i++){ 
+		d[i] = nds_data[i];
+	}
+	*/
+	fseek(ndsBinary, 0, SEEK_SET);
+	fread(d, 1, (int)sizeof(tNDSHeader), ndsBinary);
 	
 	rsa->arm9dest = nds_head->arm9destination;
 	rsa->arm9dest2 = nds_head->arm9destination;	
@@ -851,7 +895,7 @@ void WMB_Main() {
 
 			// data transfer...
 			// send data packet curdata... wait for ack
-			k = BuildNDSData(&datapkt[0], curdata, rsa, nds_head, nds_data);
+			k = BuildNDSData(&datapkt[0], curdata, rsa, nds_head, (FILE*)ndsBinary);
 			copy_mac(&datapkt[10], &mymac[0]);
 			copy_mac(&datapkt[16], &mymac[0]);
 			fh = (struct iee80211_framehead *) (unsigned int) &datapkt[0];
@@ -947,7 +991,6 @@ void WMB_Main() {
 
 /* Juglak ARM9 Code end */
 
-
 bool GDBEnabled = false;
 char curChosenBrowseFile[MAX_TGDSFILENAME_LENGTH+1];
 
@@ -1002,13 +1045,9 @@ int main(int _argc, sint8 **_argv) {
 	while(IPC3->t1 != 0x23456789);
 	
 	//Init XMEM (let's see how good this one behaves...)
-	u8* testram;
-	u32 xmemsize;
-	testram = (u8*) malloc(1);
-	xmemsize = (0x02000000 + getMaxRam() - (sizeof(struct FileClassList) * 6) - 0x40000- (u32) testram);	//Reserve some TGDS FS Iterator items (6) so we can load a file browser, and 256K for various frame stuff
+	u32 xmemsize = XMEMTOTALSIZE;
 	xmemsize = xmemsize - (xmemsize/XMEM_BS) - 1024;
 	xmemsize = xmemsize - (xmemsize%1024);
-	free(testram);
 	XmemSetup(xmemsize, XMEM_BS);
 	XmemInit();
 	
