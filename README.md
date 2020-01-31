@@ -12,7 +12,7 @@ ToolchainGenericDS-wmbhost sends a Download Play file to a flashme'd Nintendo DS
 
 
 What it does:
-Button (X) 		->	(A): 	Download Play Host: Send a 1.5MB or less file from SD (Press X to retry if sending fails)
+Button (X) 		->	(A): 	Download Play Host: Send any file, regardless of size, from SD (Press X to retry if sending fails)
 
 WMB Host
 Version 0.1
