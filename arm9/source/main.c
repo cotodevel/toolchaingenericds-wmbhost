@@ -422,10 +422,10 @@ void SendBeacon(struct ds_advert *ad, int seq, int connected_clients){
 }
 
 void InitRSA(struct nds_rsaframe *rsa){
-	rsa->headerdest = 0x027FFE00;
-	rsa->headerdest2 = 0x027FFE00;
-	rsa->headersize = 0x160;
-	rsa->unk2C = 0x022C0000;
+	rsa->headerDestTemp = 0x027FFE00;
+	rsa->headerDestActual = 0x027FFE00;
+	rsa->headerSize = 0x160;
+	rsa->arm7destTemp = 0x022C0000;
 	rsa->unk38 = 1;
 }
 
@@ -722,12 +722,12 @@ void WMB_Main() {
 	fseek(ndsBinary, 0, SEEK_SET);
 	fread(d, 1, (int)sizeof(tNDSHeader), ndsBinary);
 	
-	rsa->arm9dest = nds_head->arm9destination;
-	rsa->arm9dest2 = nds_head->arm9destination;	
+	rsa->arm9destTemp = nds_head->arm9destination;
+	rsa->arm9destActual = nds_head->arm9destination;	
 	rsa->arm9exeaddr = nds_head->arm9executeAddress;
 	rsa->arm7exeaddr = nds_head->arm7executeAddress;
 	rsa->arm9size = nds_head->arm9binarySize;
-	rsa->arm7dest = nds_head->arm7destination;
+	rsa->arm7destActual = nds_head->arm7destination;
 	rsa->arm7size = nds_head->arm7binarySize;
 	
 	d = (unsigned char *) (unsigned int) rsa;
@@ -740,12 +740,12 @@ void WMB_Main() {
 	for(i=0;(unsigned)i<strlen(ts);i++) {
 		ad->game_name[i] = ts[i];
 	}
-
+	
 	// and a blue test icon...
 	ad->icon_pallete[0] = 1;
 	ad->icon_pallete[1] = RGB15(0,0,31) | 0x8000;
 	for(i=0;i<512;i++) ad->icon[i] = 0x11;
-	
+
 	Wifi_SetChannel9Juglak(WMB_CHANNEL);
 	TIMERXDATA(2) = (unsigned short) TIMER_FREQ_64(8);
 	TIMERXCNT(2) = TIMER_DIV_64 | TIMER_ENABLE | TIMER_IRQ_REQ;

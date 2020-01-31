@@ -69,25 +69,28 @@ struct ds_element {
 	unsigned short data_size;
 	unsigned char data[256];
 } __attribute__ ((__packed__));
-
+  
 struct nds_rsaframe {
-	unsigned int arm9exeaddr;
-	unsigned int arm7exeaddr;
-	unsigned int unk08; // 0
-	unsigned int headerdest; // 0x027FFE00
-	unsigned int headerdest2; // 0x027FFE00
-	unsigned int headersize; // 0x160
-	unsigned int unk18; // 0
-	unsigned int arm9dest; // 
-	unsigned int arm9dest2; // 
-	unsigned int arm9size; // 
-	unsigned int unk28; // 0
-	unsigned int unk2C; // 0x022C0000
-	unsigned int arm7dest; // 
-	unsigned int arm7size; // 
-	unsigned int unk38; // 1
-	unsigned char signature[136]; // 0's?
-	unsigned char unkC4[36]; // 0's
+	unsigned int arm9exeaddr;	//00h 4   ARM9 execute address
+	unsigned int arm7exeaddr;	//04h 4   ARM7 execute address
+	unsigned int zerofilled0; //08h 4   Zerofilled
+	unsigned int headerDestTemp; //0Ch 4   Header destination (temp)
+	unsigned int headerDestActual; //10h 4   Header destination (actual)
+	unsigned int headerSize; //14h 4   Header size (160h)
+	unsigned int zerofilled1; //18h 4   Zerofilled
+	unsigned int arm9destTemp; 	//1Ch 4   ARM9 destination address (temp) 
+	unsigned int arm9destActual; //20h 4   ARM9 destination address (actual)
+	unsigned int arm9size; 	//24h 4   ARM9 binary size 
+	unsigned int zerofilled2; 	//28h 4   Zerofilled
+	unsigned int arm7destTemp; 	//2Ch 4   ARM7 destination address (temp) (usually 22C0000h in Main RAM)
+	unsigned int arm7destActual; 	//30h 4   ARM7 destination address (actual) (usually somewhere in WRAM) 
+	unsigned int arm7size; 	//34h 4   ARM7 binary size 
+	unsigned int unk38; 	//38h 4   Unknown (00000001h)
+	unsigned int signatureID; //3Ch 4   Signature ID (61h,63h,01h,00h) (aka "ac", or backwards "ca") ;
+	unsigned char signatureRSA[0x80];//40h 80h Signature RSA (RSA signature in OpenPGP SHA1 format)  ;
+	unsigned int signatureFooter;	//C0h 4   Signature Footer   
+	unsigned char zerofilled3[36];//C4h 36  Zerofilled
+	//E8h -   End of frame payload
 } __attribute__ ((__packed__));
 
 
