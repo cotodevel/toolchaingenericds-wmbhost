@@ -112,6 +112,14 @@ struct sIPCSharedTGDSSpecific {
 #define LCDPC_ON_BOTH (5)
 #define LCDPC_SOFT_POWEROFF (0xff)
 
+#define REQ_GBD_ARM7 (u32)(0xffff1988)
+
+
+#ifdef ARM9
+static inline void initGDBSession(){
+	SendFIFOWords((u32)REQ_GBD_ARM7, (u32)0);
+}
+#endif
 
 #endif
 

@@ -423,12 +423,30 @@ void SendBeacon(struct ds_advert *ad, int seq, int connected_clients){
 	
 }
 
-void InitRSA(struct nds_rsaframe *rsa){
+bool InitRSA(struct nds_rsaframe *rsa, FILE * fileHandle){
+	memset((u8*)rsa, 0, sizeof(struct nds_rsaframe));
+	
 	rsa->headerDestTemp = 0x027FFE00;
 	rsa->headerDestActual = 0x027FFE00;
 	rsa->headerSize = 0x160;
 	rsa->arm7destTemp = 0x022C0000;
 	rsa->unk38 = 1;
+	
+	//Append the RSAFrame if the NDS Binary has one (enables retail Demos to be detected on unmodified NintendoDS)
+	int RSAOffset = getRSASignatureOffsetFromFileHandle(fileHandle);
+	if(RSAOffset != -1){
+		//Do RSA Fill
+		int fLoc = ftell(fileHandle);
+		fseek(fileHandle, RSAOffset, SEEK_SET);
+		int read = fread((u8*)&rsa->signatureID, 1, sizeof(rsa->signatureID) + sizeof(rsa->signatureRSA), fileHandle);
+		fseek(fileHandle, fLoc, SEEK_SET);
+		//printf("Found RSAOffset! File Offset: %x", RSAOffset);
+		return true;
+	}
+	else{
+		//printf("RSAOffset not found!");
+	}
+	return false;
 }
 
 unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsaframe *rsa, tNDSHeader *ndsh, FILE * fileHandle){	//u8* data
@@ -608,6 +626,29 @@ int CompareMAC(u8* a, u8* b){
 	return 1;
 }
 
+int getRSASignatureOffsetFromFileHandle(FILE * fh){
+	int offset = -1;
+	int fLoc = ftell(fh);
+	int fileSize = FS_getFileSizeFromOpenHandle(fh);
+	#define bufferSize (int)(64*1024)
+	#define RSASignaure (u32)(0x00016361)	//c a 
+	u8* bufferSeek = (u8*)malloc(bufferSize);
+	int i = 0;
+	for(i = 0; i < (fileSize/bufferSize) + 1; i++){
+		int read = fread(bufferSeek, 1, bufferSize, fh);
+		int j = 0;
+		for(j=0; j < (read/sizeof(u32)); j++){
+			if((u32)*(u32*)(bufferSeek + (j*4)) == RSASignaure){
+				offset+=((i*bufferSize) + (j*4) + 1);	//account the default invalid value
+				break;
+			}
+		}
+	}
+	free(bufferSeek);
+	fseek(fh, fLoc, SEEK_SET);
+	return offset;
+}
+
 void WMB_Main() {
 	int i, ds, j=0, k;
 	unsigned char *datapkt;
@@ -689,7 +730,70 @@ void WMB_Main() {
 	datapkt = (unsigned char *) Xcalloc(2048,1);
 
 	rsa = (struct nds_rsaframe *) Xcalloc(sizeof(struct nds_rsaframe),1);
-	InitRSA(rsa);
+	bool isRSASigned = InitRSA(rsa, ndsBinary);
+	if(isRSASigned == true){
+		printf("RSA-Signature detected! rsa addr: %x", rsa);
+		//initGDBSession();
+	}
+	else{
+		printf("Missing RSA-Signature!");
+	}
+	
+	/*
+	while(1==1){
+		//GDB Stub Process must run here
+		int retGDBVal = remoteStubMain();
+		if(retGDBVal == remoteStubMainWIFINotConnected){
+			if (switch_dswnifi_mode(dswifi_gdbstubmode) == true){
+				//Show IP and port here
+				printf("[Connect to GDB]: %s", ((getValidGDBMapFile() == true) ? " GDBFile Mode!" : "NDSMemory Mode!"));
+				char IP[16];
+				printf("Port:%d GDB IP:%s",remotePort, print_ip((uint32)Wifi_GetIP(), IP));
+				remoteInit();
+			}
+			else{
+				//GDB Client Reconnect:ERROR
+			}
+		}
+		else if(retGDBVal == remoteStubMainWIFIConnectedGDBDisconnected){
+			setWIFISetup(false);
+			printf("Remote GDB Client disconnected. ");
+			printf("Press A to retry this GDB Session. ");
+			printf("Press B to reboot NDS GDB Server ");
+			
+			int keys = 0;
+			while(1){
+				scanKeys();
+				keys = keysPressed();
+				if (keys&KEY_A){
+					break;
+				}
+				if (keys&KEY_B){
+					break;
+				}
+				IRQVBlankWait();
+			}
+			
+			if (keys&KEY_B){
+				setValidGDBMapFile(false);
+				main(0, (sint8**)"");
+			}
+			
+			if (switch_dswnifi_mode(dswifi_gdbstubmode) == true){ // gdbNdsStart() called
+				reconnectCount++;
+				clrscr();
+				//Show IP and port here
+				printf("    ");
+				printf("    ");
+				printf("[Re-Connect to GDB]: %s",((getValidGDBMapFile() == true) ? " GDBFile Mode!" : "NDSMemory Mode!"));
+				char IP[16];
+				printf("Retries: %d",reconnectCount);
+				printf("Port:%d GDB IP:%s", remotePort, print_ip((uint32)Wifi_GetIP(), IP));
+				remoteInit();
+			}
+		}
+	}
+	*/
 	
 	ad = (struct ds_advert *) Xcalloc(sizeof(struct ds_advert),1);
 	banner = (tNDSBanner *) Xcalloc(sizeof(tNDSBanner),1);
@@ -1141,4 +1245,3 @@ int main(int _argc, sint8 **_argv) {
 		
 	}
 }
-

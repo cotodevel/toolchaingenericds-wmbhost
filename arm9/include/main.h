@@ -136,8 +136,10 @@ extern unsigned char * RXNextFrame(int *size);
 extern void SendACK(unsigned char *mac);
 extern unsigned short computeBeaconChecksum(unsigned short *data, int length);
 extern void SendBeacon(struct ds_advert *ad, int seq, int connected_clients);
-extern void InitRSA(struct nds_rsaframe *rsa);
+extern bool InitRSA(struct nds_rsaframe *rsa, FILE * fileHandle);
 extern unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsaframe *rsa, tNDSHeader *ndsh, FILE * fileHandle);
+
+extern int getRSASignatureOffsetFromFileHandle(FILE * fh);
 
 extern int bnum;
 extern struct ds_advert *ad;

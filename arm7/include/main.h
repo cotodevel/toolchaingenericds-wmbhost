@@ -40,6 +40,7 @@ extern void Wifi_SetChannel7Juglak(int channel);
 
 extern struct XYTscPos first, tempPos;
 extern int vcount;
+extern bool GDBStarted;
 
 #ifdef __cplusplus
 }

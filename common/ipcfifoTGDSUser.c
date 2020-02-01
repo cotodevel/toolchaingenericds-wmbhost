@@ -56,7 +56,11 @@ void HandleFifoNotEmptyWeakRef(uint32 cmd1,uint32 cmd2){
 	switch (cmd1) {
 		//NDS7: 
 		#ifdef ARM7
-		
+		case((u32)REQ_GBD_ARM7):{
+			installWifiFIFO();
+			GDBStarted = true;
+		}
+		break;
 		#endif
 		
 		//NDS9: 

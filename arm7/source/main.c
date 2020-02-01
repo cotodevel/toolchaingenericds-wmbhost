@@ -175,7 +175,9 @@ void MyWifi() {
 		if(WIFI_REG(0x80A8)&0x8000) { 
 			WIFI_REG(0x80AE)=0x000D; 
 		}
-		
+		if(GDBStarted == true){
+			break;
+		}
 	}
 
 }
@@ -183,6 +185,8 @@ void MyWifi() {
 void initDLDIARM7(u32 srcDLDIAddr){	//stubbed
 	
 }
+
+bool GDBStarted = false;
 
 //---------------------------------------------------------------------------------
 int main(int _argc, sint8 **_argv) {
@@ -215,13 +219,13 @@ int main(int _argc, sint8 **_argv) {
 	Wifi_initJuglak7();	
 
 	WIFI_READY = 1;
-
-	MyWifi(); //ARM7 Loop here
+	GDBStarted = false;
 	
-	// Keep the ARM7 idle
+	MyWifi(); //ARM7 Loop here. Unless GDBSession begins
+	
 	while (1) {
-		RIPC_Cmd(0);
-		//R_CmdHandler(0);
+		handleARM7SVC();	/* Do not remove, handles TGDS services */
+		IRQVBlankWait();
 	}
    
 	return 0;
