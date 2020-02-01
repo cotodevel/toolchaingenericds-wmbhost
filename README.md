@@ -23,8 +23,7 @@ By Juglak
 
 ------
 
-This program will run on a DS, and transmit small (under about 2.5MB) to another DS
-which has been flashed with FlashMe (so that it ignores WMB signatures).
+This program will run on a DS, and transmit NDS Binaries to another DS which has been flashed with FlashMe (so that it ignores WMB signatures).
 
 To try this program, simply run it on your DS. This will broadcast a built in demo program.
 
