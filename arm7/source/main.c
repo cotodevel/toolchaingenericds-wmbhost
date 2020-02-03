@@ -134,7 +134,6 @@ int Juglak_WifiRX() {
 }
 
 void Juglak_WifiTXQueue() {
-	REG_IME = 0;
 	int i,j;
 	j = tx_count;
 	i = tx_base;
@@ -149,7 +148,6 @@ void Juglak_WifiTXQueue() {
 			WIFI_REG(0x80AE) |= 0x0008;
 		}
 	}
-	REG_IME = 1;
 }
 
 void MyWifi() {

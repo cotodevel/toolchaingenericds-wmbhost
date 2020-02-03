@@ -113,7 +113,7 @@ struct sIPCSharedTGDSSpecific {
 #define LCDPC_SOFT_POWEROFF (0xff)
 
 #define REQ_GBD_ARM7 (u32)(0xffff1988)
-
+#define REQ_TX_FRAME (u32)(0xffff1A11)
 
 #ifdef ARM9
 static inline void initGDBSession(){

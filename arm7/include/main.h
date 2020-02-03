@@ -42,6 +42,10 @@ extern struct XYTscPos first, tempPos;
 extern int vcount;
 extern bool GDBStarted;
 
+extern unsigned char *tx_queue[64],*rx_queue[64];
+extern unsigned int *rx_sizes,*tx_sizes;
+extern unsigned int *RIPC;
+
 #ifdef __cplusplus
 }
 #endif

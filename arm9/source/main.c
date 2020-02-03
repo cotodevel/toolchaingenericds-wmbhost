@@ -201,8 +201,8 @@ unsigned int RIPCc[32];
 unsigned int *RIPC;
 
 // Wifi Stuff
-unsigned char *tx_queue[64],*rx_queue[64];
-unsigned int *rx_sizes,*tx_sizes;
+unsigned char *rx_queue[64];
+unsigned int *rx_sizes;
 unsigned char my_mac[6];
 unsigned short bec_seq = 0;
 
@@ -229,16 +229,11 @@ void InitWifiMem(){
 	RIPC[1] = (unsigned int) Xcalloc(((64+64)*2048)+((64+64)*4),1);
 	RIPC[1] |= 0x00400000; // disable caching on the wifi queue mem...
 
+	// setup RX queue mem...
 	for(i=0;i<64;i++) { rx_queue[i] = (unsigned char *) (unsigned int) ( RIPC[1] + (i*2048) ); }
 
-	// setup TX queue mem...
-	for(i=0;i<64;i++) { tx_queue[i] = (unsigned char *) (unsigned int) ( RIPC[1] + (i*2048) + 131072 ); }
-			
 	// setup RX queue sizes mem...
 	rx_sizes = (unsigned int *) (unsigned int) ( RIPC[1] + 262144 );
-
-	// setup RX queue sizes mem...
-	tx_sizes = (unsigned int *) (unsigned int) ( RIPC[1] + 262144 + 256 );
 
 	// tell arm7 the location of wifi queue mem...
 	RIPC[0] = 2;
@@ -287,29 +282,11 @@ void GetMAC(){
 }
 
 void SendFrame(unsigned char *data, int len){
-	coherent_user_range_by_size((uint32)&tx_queue[0][0], sizeof(tx_queue));
-	
-	int i, cf;
-	cf = tx_base;
-	for(i=0;i<12;i++) {
-		tx_queue[cf][i] = 0;
-	}
-
-	tx_queue[cf][8] = 0x14; // Trans rate... a=1 14=2mbit
-	
-	// Data Size
-	tx_queue[cf][10]	= (len+4)&0xFF;
-	tx_queue[cf][11]	= ((len+4)&0xFF00)>>8;
-
-	for(i=0;i<len;i++) {
-		tx_queue[cf][i+12] = data[i];
-	}
-
-	tx_sizes[cf] = len+16;
-	tx_base++;
-	tx_count++;
-
-	if(tx_base == 64) tx_base = 0;
+	struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
+	uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
+	fifomsg[0] = (uint32)data;
+	fifomsg[1] = (uint32)len;
+	SendFIFOWords(REQ_TX_FRAME, (uint32)fifomsg);
 }
 
 unsigned char * RXNextFrame(int *size){

@@ -116,8 +116,8 @@ extern unsigned int RIPCc[32];
 extern unsigned int *RIPC;
 
 // Wifi Stuff
-extern unsigned char *tx_queue[64],*rx_queue[64];
-extern unsigned int *rx_sizes,*tx_sizes;
+extern unsigned char *rx_queue[64];
+extern unsigned int *rx_sizes;
 extern unsigned char my_mac[6];
 extern unsigned short bec_seq ;
 

@@ -61,6 +61,36 @@ void HandleFifoNotEmptyWeakRef(uint32 cmd1,uint32 cmd2){
 			GDBStarted = true;
 		}
 		break;
+		case((u32)REQ_TX_FRAME):{
+			struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
+			uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
+			unsigned char *data = (unsigned char *)fifomsg[0]; 
+			int len = (int)fifomsg[1];
+			
+			int i, cf;
+			cf = tx_base;
+			for(i=0;i<12;i++) {
+				tx_queue[cf][i] = 0;
+			}
+
+			tx_queue[cf][8] = 0x14; // Trans rate... a=1 14=2mbit
+			
+			// Data Size
+			tx_queue[cf][10]	= (len+4)&0xFF;
+			tx_queue[cf][11]	= ((len+4)&0xFF00)>>8;
+
+			for(i=0;i<len;i++) {
+				tx_queue[cf][i+12] = data[i];
+			}
+
+			tx_sizes[cf] = len+16;
+			tx_base++;
+			tx_count++;
+
+			if(tx_base == 64) tx_base = 0;
+			fifomsg[1] = fifomsg[0] = 0;
+		}
+		break;
 		#endif
 		
 		//NDS9: 
