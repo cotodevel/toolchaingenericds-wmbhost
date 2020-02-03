@@ -566,7 +566,7 @@ unsigned short BuildNDSData(unsigned char *d, unsigned short seq, struct nds_rsa
 		d[0x21] = (seq&0xFF);
 		d[0x22] = (seq&0xFF00)>>8;
                                        
-		if (((rsa->arm7size%504) == 0) || (seq != (arm7e-1)))                                                                {
+		if (((rsa->arm7size%504) == 0) || (seq != (arm7e-1))){
 			// size == 504 (FF payload size)
 			d[0x1C] = 0xFF;
 			//RF_setpos(f,ndsh->arm7romSource+((seq-arm7s)*504));
@@ -805,18 +805,9 @@ void WMB_Main() {
 	struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
 	int nameLen = (int)(TGDSIPC->DSFWSETTINGSInst.nickname_length_chars[0] | TGDSIPC->DSFWSETTINGSInst.nickname_length_chars[1] << 8);	//01Ah  2   Nickname length in characters    (0..10)
 	ad->hostname_len = nameLen;
-	for(i=0;i<ad->hostname_len;i++) {
-		ad->hostname[i] = TGDSIPC->DSFWSETTINGSInst.nickname_utf16[i];
-	}
-	
-	// make a description...
-	sprintf(ts,"TGDS: WMB Host v0.1");
-	for(i=0;(unsigned)i<strlen(ts);i++) {
-		ad->game_description[i] = ts[i];
-	}
+	memcpy((char*)&ad->hostname[0], (char*)&TGDSIPC->DSFWSETTINGSInst.nickname_utf16[0], nameLen * sizeof(u16));
 	
 	nds_head = (tNDSHeader *) Xcalloc(sizeof(tNDSHeader),1);
-	
 	d = (unsigned char *) (unsigned int) nds_head;
 	
 	//read NDSHeader
@@ -827,6 +818,27 @@ void WMB_Main() {
 	*/
 	fseek(ndsBinary, 0, SEEK_SET);
 	fread(d, 1, (int)sizeof(tNDSHeader), ndsBinary);
+	
+	
+	//Read banner
+	fseek(ndsBinary, nds_head->bannerOffset, SEEK_SET);
+	fread(banner, 1, sizeof(*banner), ndsBinary);
+	for(i=0;(unsigned)i<sizeof(banner->palette);i++) {
+		ad->icon_pallete[i] = banner->palette[i];
+	}
+	for(i=0;i<sizeof(banner->icon);i++){ 
+		ad->icon[i] = banner->icon[i];
+	}
+	
+	
+	//Title & Description
+	for(i=0;(unsigned)i<strlen(nds_head->gameTitle);i++) {
+		ad->game_name[i] = nds_head->gameTitle[i];
+	}	
+	ad->game_name[strlen(nds_head->gameTitle)] = '\0';
+	int lang = (int)getLanguage();
+	memcpy((char*)&ad->game_description[0], (char*)&banner->titles[lang][0], sizeof(ad->game_description));
+	
 	
 	rsa->arm9destTemp = nds_head->arm9destination;
 	rsa->arm9destActual = nds_head->arm9destination;	
@@ -841,17 +853,6 @@ void WMB_Main() {
 		rsapkt[0x1F+i] = d[i];
 	}
 	
-	// setup demo title and icon...
-	sprintf(ts,"DLP: %s", curChosenBrowseFile);
-	for(i=0;(unsigned)i<strlen(ts);i++) {
-		ad->game_name[i] = ts[i];
-	}
-	
-	// and a blue test icon...
-	ad->icon_pallete[0] = 1;
-	ad->icon_pallete[1] = RGB15(0,0,31) | 0x8000;
-	for(i=0;i<512;i++) ad->icon[i] = 0x11;
-
 	Wifi_SetChannel9Juglak(WMB_CHANNEL);
 	TIMERXDATA(2) = (unsigned short) TIMER_FREQ_64(8);
 	TIMERXCNT(2) = TIMER_DIV_64 | TIMER_ENABLE | TIMER_IRQ_REQ;
