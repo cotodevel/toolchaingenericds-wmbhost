@@ -162,7 +162,6 @@ extern unsigned char ackdata[];
 
 // make these accessable by both cores
 #define rx_count RIPC[16]
-#define tx_count RIPC[17]
 #define rx_base RIPC[18]
 #define tx_base RIPC[19]
 #define WIFI_READY RIPC[20]

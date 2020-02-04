@@ -668,7 +668,7 @@ void WMB_Main() {
 		swiDelay(999);
 	}
 	
-	while (tx_count != 0) {
+	while (tx_base > 0) {
 		//printf("error.* Wifi was not initialized. * Please reset the system ");
 		//while(1);
 	}

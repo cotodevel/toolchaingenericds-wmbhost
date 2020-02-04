@@ -52,7 +52,6 @@ void RIPC_Cmd(bool interupt) {
 			rx_base = 0;
 			tx_base = 0;
 			rx_count = 0;
-			tx_count = 0;
 			
 			queues_setup = 1;
 			
@@ -134,19 +133,11 @@ int Juglak_WifiRX() {
 }
 
 void Juglak_WifiTXQueue() {
-	int i,j;
-	j = tx_count;
-	i = tx_base;
-	if (j) {
-		// have stuff to send
-		i -= j;
-		while (i<0) i += 64;
-		if (Wifi_TxCheck()) {
-			tx_count--;
-			WIFI_REG(0x802C) = wifi_retry;
-			Wifi_TxRawJuglak7((unsigned short *)tx_queue[i],tx_sizes[i]);
-			WIFI_REG(0x80AE) |= 0x0008;
-		}
+	if(Wifi_TxCheck() && (tx_base > 0)){
+		WIFI_REG(0x802C) = wifi_retry;
+		Wifi_TxRawJuglak7((unsigned short *)tx_queue[tx_base-1], tx_sizes[tx_base-1]);
+		WIFI_REG(0x80AE) |= 0x0008;
+		tx_base--;
 	}
 }
 
