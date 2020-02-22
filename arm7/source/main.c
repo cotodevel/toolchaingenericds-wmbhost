@@ -6,6 +6,7 @@
 #include "spitscTGDS.h"
 #include "InterruptsARMCores_h.h"
 #include <stdlib.h>
+#include "spifwTGDS.h"
 
 int vcount = 0;
 
@@ -218,4 +219,9 @@ int main(int _argc, sint8 **_argv) {
 	}
    
 	return 0;
+}
+
+//Custom Button Mapping Handler implementation: IRQ Driven
+void CustomInputMappingHandler(uint32 readKeys){
+	
 }
