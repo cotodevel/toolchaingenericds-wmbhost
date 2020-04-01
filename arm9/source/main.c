@@ -1030,7 +1030,7 @@ void menuShow(){
 	
 	printf("Available heap memory: %d", getMaxRam());
 	printf("Button (Select): this menu. ");
-	printf("ARM7 Status: %s", getarm7DebugBuffer());
+	printarm7DebugBuffer();
 }
 
 int main(int _argc, sint8 **_argv) {
