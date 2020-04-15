@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define XMEM_BS 256
+
 #ifdef __cplusplus
 extern "C" {
 #endif

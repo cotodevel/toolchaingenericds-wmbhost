@@ -14,7 +14,7 @@ void *R_LoadFile(char *filename, void *out){
 	FILE *file = fopen(filename, "r");
 	if (!file) return 0;	
 	int fileLen = FS_getFileSizeFromOpenHandle(file);
-	temp = (unsigned char *) Xmalloc(fileLen);
+	temp = (unsigned char *) TGDSARM9Malloc(fileLen);
 	fread(temp, 1, fileLen, file);
 	out=(void*)temp;
 	fclose(file);
@@ -28,10 +28,10 @@ void *R_LoadLZ77FromFile(char *filename, void *out){
 	e = (u8*) R_LoadFile(filename, NULL);
 	s = e[1]+(e[2]*256)+(e[3]*65536);
 	if (out == NULL) {
-		out = Xcalloc(s,1);
+		out = TGDSARM9Calloc(s,1);
 	}
 	swiDecompressLZSSWram(e, out);	
-	Xfree(e);
+	TGDSARM9Free(e);
 	return (void*)out;
 }
 
@@ -42,7 +42,7 @@ void *R_LoadLZ77FromBuffer(u8* inputBuffer, void *out){
 	e = (u8*)inputBuffer;
 	s = e[1]+(e[2]*256)+(e[3]*65536);
 	if (out == NULL) {
-		out = Xcalloc(s,1);
+		out = TGDSARM9Calloc(s,1);
 	}
 	swiDecompressLZSSWram(e, out);	
 	return (void*)out;

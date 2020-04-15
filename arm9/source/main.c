@@ -47,7 +47,6 @@ USA
 
 */
 
-#define XMEM_BS 256
 #define WMB_CHANNEL 13
 
 /* Juglak ARM9 Code start */
@@ -228,7 +227,7 @@ void InitWifiMem(){
 	// Allocates memory for wifi queues...
 	unsigned int i;
 	
-	RIPC[1] = (unsigned int) Xcalloc(((64+64)*2048)+((64+64)*4),1);
+	RIPC[1] = (unsigned int) TGDSARM9Calloc(((64+64)*2048)+((64+64)*4),1);
 	RIPC[1] |= 0x00400000; // disable caching on the wifi queue mem...
 
 	// setup RX queue mem...
@@ -341,7 +340,7 @@ void SendBeacon(struct ds_advert *ad, int seq, int connected_clients){
 	struct ds_element *ds;
 	int i;
 	
-	b = (unsigned char *) Xmalloc(188);
+	b = (unsigned char *) TGDSARM9Malloc(188);
 	bc = (struct beacon *) (unsigned int) b;
 	
 	for(i=0;i<188;i++) {
@@ -398,7 +397,7 @@ void SendBeacon(struct ds_advert *ad, int seq, int connected_clients){
 	copy_mac(bc->bssmac,mymac);
 	
 	SendFrame(b,188);
-	Xfree(b);
+	TGDSARM9Free(b);
 	
 }
 
@@ -705,10 +704,10 @@ void WMB_Main() {
 	ndsBinary = fopen(curChosenBrowseFile, "r");	//nds_data = (u8*)R_LoadFile(curChosenBrowseFile, NULL);
 	
 	printf("* Initializing data...");
-	dataacked = (unsigned char *) Xcalloc(65535,1);
-	datapkt = (unsigned char *) Xcalloc(2048,1);
+	dataacked = (unsigned char *) TGDSARM9Calloc(65535,1);
+	datapkt = (unsigned char *) TGDSARM9Calloc(2048,1);
 
-	rsa = (struct nds_rsaframe *) Xcalloc(sizeof(struct nds_rsaframe),1);
+	rsa = (struct nds_rsaframe *) TGDSARM9Calloc(sizeof(struct nds_rsaframe),1);
 	bool isRSASigned = InitRSA(rsa, ndsBinary);
 	if(isRSASigned == true){
 		printf("RSA-Signature detected! rsa addr: %x", rsa);
@@ -718,8 +717,8 @@ void WMB_Main() {
 		printf("Missing RSA-Signature!");
 	}
 	
-	ad = (struct ds_advert *) Xcalloc(sizeof(struct ds_advert),1);
-	banner = (tNDSBanner *) Xcalloc(sizeof(tNDSBanner),1);
+	ad = (struct ds_advert *) TGDSARM9Calloc(sizeof(struct ds_advert),1);
+	banner = (tNDSBanner *) TGDSARM9Calloc(sizeof(tNDSBanner),1);
 	
 	ad->unk220 = 0x0B;
 	ad->max_players = 1;
@@ -730,7 +729,7 @@ void WMB_Main() {
 	ad->hostname_len = nameLen;
 	memcpy((char*)&ad->hostname[0], (char*)&TGDSIPC->DSFWSETTINGSInst.nickname_utf16[0], nameLen * sizeof(u16));
 	
-	nds_head = (tNDSHeader *) Xcalloc(sizeof(tNDSHeader),1);
+	nds_head = (tNDSHeader *) TGDSARM9Calloc(sizeof(tNDSHeader),1);
 	d = (unsigned char *) (unsigned int) nds_head;
 	
 	//read NDSHeader
@@ -911,8 +910,8 @@ void WMB_Main() {
 			if (gotrsa == 1) {
 				// data mode?
 				mode = 3;
-				Xfree(dataacked);
-				dataacked = (unsigned char *) Xcalloc(65535,1);
+				TGDSARM9Free(dataacked);
+				dataacked = (unsigned char *) TGDSARM9Calloc(65535,1);
 				curdata = 1;
 			}
 			
@@ -1077,13 +1076,6 @@ int main(int _argc, sint8 **_argv) {
 	IPC3->mp2size = (unsigned int) &RIPC[0];
 	IPC3->t1 = 0x12345678;
 	while(IPC3->t1 != 0x23456789);
-	
-	//Init XMEM (let's see how good this one behaves...)
-	u32 xmemsize = XMEMTOTALSIZE;
-	xmemsize = xmemsize - (xmemsize/XMEM_BS) - 1024;
-	xmemsize = xmemsize - (xmemsize%1024);
-	XmemSetup(xmemsize, XMEM_BS);
-	XmemInit();
 	
 	menuShow();
 	
