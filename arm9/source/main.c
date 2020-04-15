@@ -38,6 +38,8 @@ USA
 #include "global_settings.h"
 #include "file.h"
 #include <stdio.h>
+#include "posixHandleTGDS.h"
+#include "TGDSMemoryAllocator.h"
 
 /*
 	WMB Host - v0.1
@@ -1039,7 +1041,7 @@ int main(int _argc, sint8 **_argv) {
 	bool isTGDSCustomConsole = false;	//set default console or custom console: default console
 	GUI_init(isTGDSCustomConsole);
 	GUI_clear();
-	
+	setTGDSMemoryAllocator(getProjectSpecificMemoryAllocatorSetup());
 	sint32 fwlanguage = (sint32)getLanguage();
 	printf("     ");
 	#ifdef ARM7_DLDI
