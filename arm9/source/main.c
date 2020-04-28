@@ -283,7 +283,7 @@ void GetMAC(){
 }
 
 void SendFrame(unsigned char *data, int len){
-	struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
+	
 	uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
 	fifomsg[0] = (uint32)data;
 	fifomsg[1] = (uint32)len;
@@ -724,7 +724,7 @@ void WMB_Main() {
 	ad->max_players = 1;
 	
 	// copy DS name into AD
-	struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
+	
 	int nameLen = (int)(TGDSIPC->DSFWSETTINGSInst.nickname_length_chars[0] | TGDSIPC->DSFWSETTINGSInst.nickname_length_chars[1] << 8);	//01Ah  2   Nickname length in characters    (0..10)
 	ad->hostname_len = nameLen;
 	memcpy((char*)&ad->hostname[0], (char*)&TGDSIPC->DSFWSETTINGSInst.nickname_utf16[0], nameLen * sizeof(u16));

@@ -21,13 +21,12 @@ USA
 //TGDS required version: IPC Version: 1.3
 
 //IPC FIFO Description: 
-//		struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress; 														// Access to TGDS internal IPC FIFO structure. 		(ipcfifoTGDS.h)
-//		struct sIPCSharedTGDSSpecific * TGDSUSERIPC = (struct sIPCSharedTGDSSpecific *)TGDSIPCUserStartAddress;		// Access to TGDS Project (User) IPC FIFO structure	(ipcfifoTGDSUser.h)
-
+//		TGDSIPC 		= 	Access to TGDS internal IPC FIFO structure. 		(ipcfifoTGDS.h)
+//		TGDSUSERIPC		=	Access to TGDS Project (User) IPC FIFO structure	(ipcfifoTGDSUser.h)
 
 //inherits what is defined in: ipcfifoTGDS.h
-#ifndef __specific_shared_h__
-#define __specific_shared_h__
+#ifndef __ipcfifoTGDSUser_h__
+#define __ipcfifoTGDSUser_h__
 
 #include "typedefsTGDS.h"
 #include "dsregs.h"
@@ -86,18 +85,20 @@ typedef struct sTransferRegion3 {
 } TransferRegion3, * pTransferRegion3;
 
 //---------------------------------------------------------------------------------
-struct sIPCSharedTGDSSpecific {
+typedef struct sIPCSharedTGDSSpecific{
 //---------------------------------------------------------------------------------
 	uint32 frameCounter7;	//VBLANK counter7
 	uint32 frameCounter9;	//VBLANK counter9
-};
+}  IPCSharedTGDSSpecific	__attribute__((aligned (4)));
+
+#define TGDSUSERIPC ((IPCSharedTGDSSpecific volatile *)(0x027FF000 + TGDSIPCSize))
 
 #ifdef ARM9
 //Used by ARM9. Required internally by ARM7
 #define TGDSDLDI_ARM7_ADDRESS (u32)(0x06000000)
 #endif
 
-#define IPC3 ((TransferRegion3 volatile *)((TGDSIPCUserStartAddress)+sizeof(struct sIPCSharedTGDSSpecific)))
+#define IPC3 ((TransferRegion3 volatile *)(((u32)TGDSIPC + TGDSIPCSize)+sizeof(struct sIPCSharedTGDSSpecific)))
 #define LRIPC IPC3
 
 #define strpcmControl_NOP (0)
