@@ -24,7 +24,7 @@ USA
 #include "typedefsTGDS.h"
 #include "dsregs.h"
 #include "spitscTGDS.h"
-
+#include "soundTGDS.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,7 +45,11 @@ extern bool GDBStarted;
 extern unsigned char *tx_queue[64],*rx_queue[64];
 extern unsigned int *rx_sizes,*tx_sizes;
 extern unsigned int *RIPC;
-
+extern u16 strpcmL0Buf[WAV_READ_SIZE];
+extern u16 strpcmL1Buf[WAV_READ_SIZE];
+extern u16 strpcmR0Buf[WAV_READ_SIZE];
+extern u16 strpcmR1Buf[WAV_READ_SIZE];
+extern void initSoundStreamUser();
 #ifdef __cplusplus
 }
 #endif
