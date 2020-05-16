@@ -1026,7 +1026,7 @@ char curChosenBrowseFile[MAX_TGDSFILENAME_LENGTH+1];
 void menuShow(){
 	clrscr();
 	printf("                              ");
-	printf(" Button (Start): File browser -> Sel. File (A): ");
+	printf(" Button (Start): File browser, then select file: (A) ");
 	printf(" Host a DownLoad Play to external DS! ");
 	
 	printf("Available heap memory: %d", getMaxRam());
