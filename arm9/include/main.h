@@ -26,6 +26,7 @@ USA
 #include "limitsTGDS.h"
 #include "dldi.h"
 #include "defs.h"
+#include "utilsTGDS.h"
 
 typedef struct sNDSHeader {
   char gameTitle[12];

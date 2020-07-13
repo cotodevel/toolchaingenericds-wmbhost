@@ -90,12 +90,6 @@ __attribute__((section(".itcm")))
 inline __attribute__((always_inline)) 
 void VblankUser(){
 	
-	if(TGDSUSERIPC->frameCounter7 < 60){
-		TGDSUSERIPC->frameCounter7++;
-	}
-	else{
-		TGDSUSERIPC->frameCounter7 = 0;
-	}
 }
 
 #ifdef ARM9

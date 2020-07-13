@@ -31,10 +31,12 @@ USA
 #include "dldi.h"
 #include "xmem.h"
 #include "dmaTGDS.h"
+#include "eventsTGDS.h"
 #include "timerTGDS.h"
 #include "nds_cp15_misc.h"
 #include "fileBrowse.h"
 #include "biosTGDS.h"
+#include "keypadTGDS.h"
 #include "global_settings.h"
 #include "file.h"
 #include <stdio.h>
@@ -283,7 +285,7 @@ void GetMAC(){
 }
 
 void SendFrame(unsigned char *data, int len){
-	
+	struct sIPCSharedTGDS * TGDSIPC = getsIPCSharedTGDS();
 	uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
 	fifomsg[0] = (uint32)data;
 	fifomsg[1] = (uint32)len;
@@ -724,7 +726,7 @@ void WMB_Main() {
 	ad->max_players = 1;
 	
 	// copy DS name into AD
-	
+	struct sIPCSharedTGDS * TGDSIPC = getsIPCSharedTGDS();
 	int nameLen = (int)(TGDSIPC->DSFWSETTINGSInst.nickname_length_chars[0] | TGDSIPC->DSFWSETTINGSInst.nickname_length_chars[1] << 8);	//01Ah  2   Nickname length in characters    (0..10)
 	ad->hostname_len = nameLen;
 	memcpy((char*)&ad->hostname[0], (char*)&TGDSIPC->DSFWSETTINGSInst.nickname_utf16[0], nameLen * sizeof(u16));
@@ -1036,11 +1038,12 @@ void menuShow(){
 
 int main(int argc, char argv[argvItems][MAX_TGDSFILENAME_LENGTH]) {
 	
-	/*			TGDS 1.5 Standard ARM9 Init code start	*/
+	/*			TGDS 1.6 Standard ARM9 Init code start	*/
 	bool isTGDSCustomConsole = false;	//set default console or custom console: default console
 	GUI_init(isTGDSCustomConsole);
 	GUI_clear();
-	setTGDSMemoryAllocator(getProjectSpecificMemoryAllocatorSetup());
+	bool isCustomTGDSMalloc = false;
+	setTGDSMemoryAllocator(getProjectSpecificMemoryAllocatorSetup(TGDS_ARM7_MALLOCSTART, TGDS_ARM7_MALLOCSIZE, isCustomTGDSMalloc));
 	sint32 fwlanguage = (sint32)getLanguage();
 	printf("     ");
 	#ifdef ARM7_DLDI
@@ -1057,7 +1060,10 @@ int main(int argc, char argv[argvItems][MAX_TGDSFILENAME_LENGTH]) {
 		printf("FS Init error.");
 	}
 	//switch_dswnifi_mode(dswifi_idlemode);
-	/*			TGDS 1.5 Standard ARM9 Init code end	*/
+	asm("mcr	p15, 0, r0, c7, c10, 4");
+	flush_icache_all();
+	flush_dcache_all();
+	/*			TGDS 1.6 Standard ARM9 Init code end	*/
 	
 	//load TGDS Logo (NDS BMP Image)
 	//VRAM A Used by console
