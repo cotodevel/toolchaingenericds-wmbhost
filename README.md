@@ -1,3 +1,4 @@
+![ToolchainGenericDS](img/TGDS-Logo.png)
 
 This is the Toolchain Generic wmbhost project:
 
