@@ -38,7 +38,7 @@ extern "C" {
 extern void XmemSetup(unsigned int size, unsigned short blocks);
 
 // starts the XMEM system
-extern void XmemInit();
+extern void XmemInit(unsigned int mallocLinearMemoryStart, unsigned int mallocLinearMemorySize);
 
 // allocate ram from XMEM ram
 // NULL if error/insufficient
@@ -55,6 +55,13 @@ extern void Xfree(const void *ptr);
 extern unsigned int XMEM_FreeMem(void);
 
 extern unsigned int XMEMTOTALSIZE;
+
+// Number of blocks to create (mem/bs)
+extern unsigned int XMEM_BLOCKCOUNT;
+
+// Size of Table in bytes
+extern unsigned int XMEM_TABLESIZE;
+
 
 #ifdef __cplusplus
 }
