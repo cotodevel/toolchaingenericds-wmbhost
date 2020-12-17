@@ -224,13 +224,3 @@ int main(int _argc, sint8 **_argv) {
    
 	return 0;
 }
-
-//Custom Button Mapping Handler implementation: IRQ Driven
-void CustomInputMappingHandler(uint32 readKeys){
-	
-}
-
-//Project specific: ARM7 Setup for TGDS sound stream
-void initSoundStreamUser(u32 srcFmt){
-	
-}

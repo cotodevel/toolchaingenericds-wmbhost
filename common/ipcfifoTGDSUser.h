@@ -21,8 +21,8 @@ USA
 //TGDS required version: IPC Version: 1.3
 
 //IPC FIFO Description: 
-//		getsIPCSharedTGDS() 		= 	Access to TGDS internal IPC FIFO structure. 		(ipcfifoTGDS.h)
-//		getsIPCSharedTGDSSpecific()	=	Access to TGDS Project (User) IPC FIFO structure	(ipcfifoTGDSUser.h)
+//		struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress; 														// Access to TGDS internal IPC FIFO structure. 		(ipcfifoTGDS.h)
+//		struct sIPCSharedTGDSSpecific * TGDSUSERIPC = (struct sIPCSharedTGDSSpecific *)TGDSIPCUserStartAddress;		// Access to TGDS Project (User) IPC FIFO structure	(ipcfifoTGDSUser.h)
 
 //inherits what is defined in: ipcfifoTGDS.h
 #ifndef __ipcfifoTGDSUser_h__
@@ -96,7 +96,7 @@ typedef struct sIPCSharedTGDSSpecific{
 #define TGDS_ARM7_MALLOCSIZE (int)(112*1024)
 #define TGDSDLDI_ARM7_ADDRESS (u32)(TGDSDLDI_ARM7_MALLOCSTART + TGDSDLDI_ARM7_MALLOCSIZE)
 
-#define IPC3 ((TransferRegion3 volatile *)(((u32)getsIPCSharedTGDS() + TGDSIPCSize)+sizeof(struct sIPCSharedTGDSSpecific)))
+#define IPC3 ((TransferRegion3 volatile *)(((u32)TGDSIPCStartAddress + TGDSIPCSize)+sizeof(struct sIPCSharedTGDSSpecific)))
 #define LRIPC IPC3
 
 #define strpcmControl_NOP (0)
