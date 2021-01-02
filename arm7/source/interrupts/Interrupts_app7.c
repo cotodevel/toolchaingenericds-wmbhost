@@ -109,8 +109,8 @@ void VcounterUser(){
 
 		x = tempPos.rawx;
 		y = tempPos.rawy;
-		xpx = tempPos.px;
-		ypx = tempPos.py;
+		xpx = tempPos.touchXpx;
+		ypx = tempPos.touchYpx;
 		z1 = tempPos.z1;
 		z2 = tempPos.z2;
 		
@@ -122,7 +122,7 @@ void VcounterUser(){
 	if ( vcount == 80 ) {
 		first = tempPos;
 	} else {
-		if (	abs( xpx - first.px) > 10 || abs( ypx - first.py) > 10 ||
+		if (	abs( xpx - first.touchXpx) > 10 || abs( ypx - first.touchYpx) > 10 ||
 				(but & ( 1<<6)) ) {
 
 			but |= (1 <<6);
@@ -130,8 +130,8 @@ void VcounterUser(){
 
 		} else { 	
 			//IPC->mailBusy = 1;
-			//IPC->touchX			= x;
-			//IPC->touchY			= y;
+			//IPC->rawx			= x;
+			//IPC->rawy			= y;
 			//IPC->touchXpx		= xpx;
 			//IPC->touchYpx		= ypx;
 			//IPC->touchZ1		= z1;
