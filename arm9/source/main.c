@@ -685,8 +685,8 @@ void WMB_Main() {
 	
 	while(1==1){
 		scanKeys();
-		if (keysPressed() & KEY_B){
-			while(keysPressed() & KEY_B){
+		if (keysDown() & KEY_B){
+			while(keysDown() & KEY_B){
 				scanKeys();
 			}
 			break;
@@ -786,7 +786,7 @@ void WMB_Main() {
 	
 	while(1) {
 		scanKeys();
-		if (keysPressed() & KEY_X) {
+		if (keysDown() & KEY_X) {
 			mode = 1;
 			clrscr();
 			printf("    ");
@@ -797,7 +797,7 @@ void WMB_Main() {
 			printf(" -------PRESS B to return -------- ");	
 		}
 		
-		if (keysPressed() & KEY_B) {
+		if (keysDown() & KEY_B) {
 			break;
 		}
 		
@@ -1088,19 +1088,19 @@ int main(int argc, char argv[argvItems][MAX_TGDSFILENAME_LENGTH]) {
 	
 	while (1){
 		scanKeys();
-		if (keysPressed() & KEY_SELECT){
+		if (keysDown() & KEY_SELECT){
 			menuShow();
 			scanKeys();
-			while(keysPressed() & KEY_SELECT){
+			while(keysDown() & KEY_SELECT){
 				scanKeys();
 			}
 		}
 		
-		if (keysPressed() & KEY_START){
+		if (keysDown() & KEY_START){
 			WMB_Main();
 			menuShow();
 			scanKeys();
-			while(keysPressed() & KEY_START){
+			while(keysDown() & KEY_START){
 				scanKeys();
 			}
 		}
@@ -1137,7 +1137,7 @@ int main(int argc, char argv[argvItems][MAX_TGDSFILENAME_LENGTH]) {
 				int keys = 0;
 				while(1){
 					scanKeys();
-					keys = keysPressed();
+					keys = keysDown();
 					if (keys&KEY_A){
 						break;
 					}
