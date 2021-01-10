@@ -105,7 +105,7 @@ void VcounterUser(){
 
 	if (!( (but ^ lastbut) & (1<<6))) {
 		
-		XYReadScrPos(&tempPos);
+		XYReadScrPosUser(&tempPos);
 
 		x = tempPos.rawx;
 		y = tempPos.rawy;
