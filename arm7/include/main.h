@@ -29,7 +29,7 @@ USA
 extern "C" {
 #endif
 
-extern int main(int _argc, sint8 **_argv);
+extern int main(int argc, char **argv);
 extern void Wifi_initJuglak7();
 extern unsigned char MacAddr[6];
 extern int Wifi_TxCheck();
@@ -44,6 +44,7 @@ extern bool GDBStarted;
 extern unsigned char *tx_queue[64],*rx_queue[64];
 extern unsigned int *rx_sizes,*tx_sizes;
 extern unsigned int *RIPC;
+extern void RIPC_Cmd(bool interupt);
 
 #ifdef __cplusplus
 }

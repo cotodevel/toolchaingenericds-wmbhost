@@ -1036,7 +1036,15 @@ void menuShow(){
 	printarm7DebugBuffer();
 }
 
-int main(int argc, char argv[argvItems][MAX_TGDSFILENAME_LENGTH]) {
+bool stopSoundStreamUser(){
+	
+}
+
+void closeSoundUser(){
+	//Stubbed. Gets called when closing an audiostream of a custom audio decoder
+}
+
+int main(int argc, char **argv) {
 	
 	/*			TGDS 1.6 Standard ARM9 Init code start	*/
 	bool isTGDSCustomConsole = false;	//set default console or custom console: default console
@@ -1148,7 +1156,7 @@ int main(int argc, char argv[argvItems][MAX_TGDSFILENAME_LENGTH]) {
 				}
 				
 				if (keys&KEY_B){
-					main(0, (sint8**)"");
+					main(argc, argv);
 				}
 				
 				if (switch_dswnifi_mode(dswifi_gdbstubmode) == true){ // gdbNdsStart() called

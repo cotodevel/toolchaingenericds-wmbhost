@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "spifwTGDS.h"
 #include "posixHandleTGDS.h"
+#include "wifi_arm7.h"
 
 int vcount = 0;
 struct XYTscPos first, tempPos;	//touchPosition first, tempPos;
@@ -178,7 +179,7 @@ void initDLDIARM7(u32 srcDLDIAddr){	//stubbed
 bool GDBStarted = false;
 
 //---------------------------------------------------------------------------------
-int main(int _argc, sint8 **_argv) {
+int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	
 	/*			TGDS 1.6 Standard ARM7 Init code start	*/

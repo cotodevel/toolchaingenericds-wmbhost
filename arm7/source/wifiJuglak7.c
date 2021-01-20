@@ -1,8 +1,10 @@
+#include <stdlib.h>
+
 #include "typedefsTGDS.h"
 #include "dsregs.h"
 #include "dsregs_asm.h"
 #include "wifi_arm7.h"
-#include <stdlib.h>
+#include "biosTGDS.h"
 
 #define		SPI_CR		(*((u16 volatile *) 0x040001C0))
 #define		SPI_DATA	(*((u16 volatile *) 0x040001C2))
