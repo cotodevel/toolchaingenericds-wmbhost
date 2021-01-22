@@ -32,7 +32,6 @@ USA
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void IpcSynchandlerUser(uint8 ipcByte){
 	switch(ipcByte){
 		default:{
@@ -45,7 +44,6 @@ void IpcSynchandlerUser(uint8 ipcByte){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void Timer0handlerUser(){
 
 }
@@ -53,7 +51,6 @@ void Timer0handlerUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void Timer1handlerUser(){
 
 }
@@ -61,7 +58,6 @@ void Timer1handlerUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void Timer2handlerUser(){
 	Timer_Beacons();
 }
@@ -69,7 +65,6 @@ void Timer2handlerUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void Timer3handlerUser(){
 
 }
@@ -77,7 +72,6 @@ void Timer3handlerUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void HblankUser(){
 
 }
@@ -85,7 +79,6 @@ void HblankUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void VblankUser(){
 	vblank_happened = true;
 }
@@ -93,7 +86,6 @@ void VblankUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void VcounterUser(){
 
 }
@@ -103,7 +95,6 @@ void VcounterUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void screenLidHasOpenedhandlerUser(){
 	
 }
@@ -112,7 +103,6 @@ void screenLidHasOpenedhandlerUser(){
 #ifdef ARM9
 __attribute__((section(".itcm")))
 #endif
-inline __attribute__((always_inline)) 
 void screenLidHasClosedhandlerUser(){
 	
 }
