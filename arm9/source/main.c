@@ -289,7 +289,7 @@ void SendFrame(unsigned char *data, int len){
 	uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
 	fifomsg[0] = (uint32)data;
 	fifomsg[1] = (uint32)len;
-	SendFIFOWords(REQ_TX_FRAME, (uint32)fifomsg);
+	SendFIFOWords(REQ_TX_FRAME);
 }
 
 unsigned char * RXNextFrame(int *size){

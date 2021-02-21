@@ -116,7 +116,7 @@ typedef struct sIPCSharedTGDSSpecific{
 
 #ifdef ARM9
 static inline void initGDBSession(){
-	SendFIFOWords((u32)REQ_GBD_ARM7, (u32)0);
+	SendFIFOWords((u32)REQ_GBD_ARM7);
 }
 #endif
 
@@ -129,7 +129,7 @@ extern "C" {
 extern struct sIPCSharedTGDSSpecific* getsIPCSharedTGDSSpecific();
 
 //NOT weak symbols : the implementation of these is project-defined (here)
-extern void HandleFifoNotEmptyWeakRef(uint32 cmd1,uint32 cmd2);
+extern void HandleFifoNotEmptyWeakRef(volatile u32 cmd1);
 extern void HandleFifoEmptyWeakRef(uint32 cmd1,uint32 cmd2);
 
 extern void EWRAMPrioToARM7();
