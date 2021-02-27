@@ -108,7 +108,6 @@ extern "C" {
 extern int main(int argc, char **argv);
 extern char curChosenBrowseFile[MAX_TGDSFILENAME_LENGTH+1];
 extern bool fillNDSLoaderContext(char * filename);
-extern bool GDBEnabled;
 extern struct FileClassList * thisFileList;
 
 //Juglak ARM9 specific
