@@ -629,6 +629,13 @@ int getRSASignatureOffsetFromFileHandle(FILE * fh){
 	return offset;
 }
 
+//ToolchainGenericDS-LinkedModule User implementation: Called if TGDS-LinkedModule fails to reload ARM9.bin from DLDI.
+char args[8][MAX_TGDSFILENAME_LENGTH];
+char *argvs[8];
+int TGDSProjectReturnFromLinkedModule() __attribute__ ((optnone)) {
+	return -1;
+}
+
 void WMB_Main() {
 	int i, ds, j=0, k;
 	unsigned char *datapkt;

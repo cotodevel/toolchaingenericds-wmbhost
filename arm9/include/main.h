@@ -156,6 +156,9 @@ extern unsigned char pingdata[];
 extern unsigned char enddata[];
 extern unsigned char ackdata[];
 
+extern char args[8][MAX_TGDSFILENAME_LENGTH];
+extern char *argvs[8];
+
 #ifdef __cplusplus
 }
 #endif
