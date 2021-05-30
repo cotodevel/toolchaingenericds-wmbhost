@@ -787,7 +787,7 @@ void WMB_Main() {
 	Wifi_SetChannel9Juglak(WMB_CHANNEL);
 	TIMERXDATA(2) = (unsigned short) TIMER_FREQ_64(8);
 	TIMERXCNT(2) = TIMER_DIV_64 | TIMER_ENABLE | TIMER_IRQ_REQ;
-	EnableIrq(IRQ_TIMER2);
+	irqEnable(IRQ_TIMER2);
 	
 	setKeys(KEY_X);	//Press X
 	
