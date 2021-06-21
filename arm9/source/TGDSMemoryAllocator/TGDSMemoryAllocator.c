@@ -22,6 +22,7 @@ USA
 #include "posixHandleTGDS.h"
 #include "xmem.h"
 #include "dldi.h"
+#include "dsregs.h"
 
 ////////[For custom Memory Allocator implementation]:////////
 //You need to override getProjectSpecificMemoryAllocatorSetup():
@@ -54,6 +55,12 @@ struct AllocatorInstance * getProjectSpecificMemoryAllocatorSetup(u32 ARM7Malloc
 	
 	//DLDI
 	customMemoryAllocator->DLDI9StartAddress = (u32)&_io_dldi_stub;
+	
+	//TWL Mode (using NTR SCFG):
+	if(__dsimode == true){
+		//set WORKRAM 32K to ARM7 because TGDS ARM7 TWL payload is over 64K. ARM9 can't use it
+		WRAM_CR = WRAM_0KARM9_32KARM7;
+	}
 	
 	return customMemoryAllocator;
 }
