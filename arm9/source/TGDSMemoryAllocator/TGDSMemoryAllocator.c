@@ -56,11 +56,6 @@ struct AllocatorInstance * getProjectSpecificMemoryAllocatorSetup(u32 ARM7Malloc
 	//DLDI
 	customMemoryAllocator->DLDI9StartAddress = (u32)&_io_dldi_stub;
 	
-	//TWL Mode (using NTR SCFG):
-	if(__dsimode == true){
-		//set WORKRAM 32K to ARM7 because TGDS ARM7 TWL payload is over 64K. ARM9 can't use it
-		WRAM_CR = WRAM_0KARM9_32KARM7;
-	}
-	
+	//Memory Setup: ARM7 TGDS 96K = 0x037f8000 ~ 0x03810000. TGDS Sound Streaming code: Disabled/Custom
 	return customMemoryAllocator;
 }
