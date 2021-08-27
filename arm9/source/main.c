@@ -285,8 +285,7 @@ void GetMAC(){
 }
 
 void SendFrame(unsigned char *data, int len){
-	struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
-	uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
+	uint32 * fifomsg = (uint32 *)NDS_UNCACHED_SCRATCHPAD;
 	fifomsg[0] = (uint32)data;
 	fifomsg[1] = (uint32)len;
 	SendFIFOWords(REQ_TX_FRAME);

@@ -70,8 +70,7 @@ void HandleFifoNotEmptyWeakRef(volatile u32 cmd1){
 		}
 		break;
 		case((u32)REQ_TX_FRAME):{
-			struct sIPCSharedTGDS * TGDSIPC = TGDSIPCStartAddress;
-			uint32 * fifomsg = (uint32 *)&TGDSIPC->fifoMesaggingQueue[0];
+			uint32 * fifomsg = (uint32 *)NDS_CACHED_SCRATCHPAD;
 			unsigned char *data = (unsigned char *)fifomsg[0]; 
 			int len = (int)fifomsg[1];
 			
