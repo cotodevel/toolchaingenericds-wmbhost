@@ -19,7 +19,7 @@
 #TGDS1.6 compatible Makefile
 
 #ToolchainGenericDS specific: Use Makefiles from either TGDS, or custom
-export SOURCE_MAKEFILE7 = custom
+export SOURCE_MAKEFILE7 = default
 export SOURCE_MAKEFILE9 = default
 
 #Translate paths to windows with forward slashes
@@ -90,6 +90,7 @@ export DIRS_ARM9_SRC = data/	\
 export DIRS_ARM9_HEADER = data/	\
 			build/	\
 			include/	\
+			source/	\
 			source/gui/	\
 			source/TGDSMemoryAllocator/	\
 			../common/	\
