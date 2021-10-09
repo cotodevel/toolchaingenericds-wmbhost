@@ -1,5 +1,9 @@
 ![ToolchainGenericDS](img/TGDS-Logo.png)
 
+NTR/TWL SDK: TGDS1.64
+
+master: Development branch. Use TGDS1.64Stable: branch for stable features.
+
 This is the Toolchain Generic wmbhost project:
 
 Compile Toolchain: To compile this project you will need to follow the steps at https://bitbucket.org/Coto88/toolchaingenericds : Then simply extract the project somewhere.
@@ -51,5 +55,7 @@ Enjoy.
 
 
 /release folder has the latest binary precompiled for your convenience.
+
+Latest stable release: https://bitbucket.org/Coto88/ToolchainGenericDS-wmbhost/get/TGDS1.64Stable.zip
 
 Coto
