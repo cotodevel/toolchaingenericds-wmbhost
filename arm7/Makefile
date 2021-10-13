@@ -111,8 +111,6 @@ $(TARGET_LIBRARY_CRT0_FILE_7).o:	$(TARGET_LIBRARY_LINKER_FILE_7)
 	-@echo 'S Compile start: crt0s'
 	rm -fr $(BUILD)/$(TARGET_LIBRARY_CRT0_FILE_7).o
 	$(CPP)	-x assembler-with-cpp	$(DIRLIBS_HDR)	$(DIRLIBS_SRC)	$(CC_ASFLAGS)	-o	$(OBJDIR)/$@	-c	$<
-	cp	-r $(TARGET_LIBRARY_LINKER_PATH_LD)nds_arm7_ld.ld $(CURDIR)
-	cp	-r $(TARGET_LIBRARY_LINKER_PATH_LD)nds_arm7_ld.specs $(CURDIR)	
 	-@echo 'S Compile end: crt0s'
 
 #Linkage. 
@@ -137,4 +135,4 @@ $(BINSTRIP_RULE_7): $(ELF_ARM7)
 	
 clean:
 	-@echo 'cleanup $(DIR_ARM7)'
-	-@rm -fr $(BINSTRIP_RULE_7)	$(MAPFILE)	$(CURDIR)/nds_arm7_ld.specs	$(CURDIR)/nds_arm7_ld.ld	$(CURDIR)/arm7-nonstripped_dsi.elf $(CURDIR)/arm7-nonstripped_dsi.map
+	-@rm -fr $(BINSTRIP_RULE_7)	$(MAPFILE)	$(CURDIR)/arm7-nonstripped_dsi.elf $(CURDIR)/arm7-nonstripped_dsi.map
