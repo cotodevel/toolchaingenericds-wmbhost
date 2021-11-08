@@ -37,7 +37,7 @@ extern void Wifi_MACCopy(u16 * dest, u32 MAC_Base, u32 MAC_Offset, u32 length);
 extern void Wifi_TxRawJuglak7(u16 * data, int datalen);
 extern void Wifi_SetChannel7Juglak(int channel);
 
-extern struct XYTscPos first, tempPos;
+extern struct touchPosition first, tempPos;
 extern int vcount;
 extern bool GDBStarted;
 

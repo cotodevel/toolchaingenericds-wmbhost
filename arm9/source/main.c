@@ -31,7 +31,6 @@ USA
 #include "dldi.h"
 #include "xmem.h"
 #include "dmaTGDS.h"
-#include "eventsTGDS.h"
 #include "timerTGDS.h"
 #include "nds_cp15_misc.h"
 #include "fileBrowse.h"
@@ -288,7 +287,7 @@ void SendFrame(unsigned char *data, int len){
 	uint32 * fifomsg = (uint32 *)NDS_UNCACHED_SCRATCHPAD;
 	fifomsg[0] = (uint32)data;
 	fifomsg[1] = (uint32)len;
-	SendFIFOWords(REQ_TX_FRAME);
+	SendFIFOWords(REQ_TX_FRAME, 0xFF);
 }
 
 unsigned char * RXNextFrame(int *size){
@@ -1038,7 +1037,6 @@ void menuShow(){
 	
 	printf("Available heap memory: %d", getMaxRam());
 	printf("Button (Select): this menu. ");
-	printarm7DebugBuffer();
 }
 
 int internalCodecType = SRC_NONE;//Internal because WAV raw decompressed buffers are used if Uncompressed WAV or ADPCM
