@@ -28,7 +28,6 @@ USA
 #include "wifi_arm7.h"
 #include "main.h"
 #include "InterruptsARMCores_h.h"
-#include "eventsTGDS.h"
 
 //User Handler Definitions
 
@@ -98,12 +97,12 @@ void VcounterUser(){
 
 	if (!( (but ^ lastbut) & (1<<6))) {
 		
-		XYReadScrPosUser(&tempPos);
+		//XYReadScrPosUser(&tempPos);
 
 		x = tempPos.rawx;
 		y = tempPos.rawy;
-		xpx = tempPos.touchXpx;
-		ypx = tempPos.touchYpx;
+		xpx = tempPos.px;
+		ypx = tempPos.py;
 		z1 = tempPos.z1;
 		z2 = tempPos.z2;
 		
@@ -115,7 +114,7 @@ void VcounterUser(){
 	if ( vcount == 80 ) {
 		first = tempPos;
 	} else {
-		if (	abs( xpx - first.touchXpx) > 10 || abs( ypx - first.touchYpx) > 10 ||
+		if (	abs( xpx - first.px) > 10 || abs( ypx - first.py) > 10 ||
 				(but & ( 1<<6)) ) {
 
 			but |= (1 <<6);

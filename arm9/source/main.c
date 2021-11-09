@@ -31,7 +31,6 @@ USA
 #include "dldi.h"
 #include "xmem.h"
 #include "dmaTGDS.h"
-#include "eventsTGDS.h"
 #include "timerTGDS.h"
 #include "nds_cp15_misc.h"
 #include "fileBrowse.h"
@@ -288,7 +287,7 @@ void SendFrame(unsigned char *data, int len){
 	uint32 * fifomsg = (uint32 *)NDS_UNCACHED_SCRATCHPAD;
 	fifomsg[0] = (uint32)data;
 	fifomsg[1] = (uint32)len;
-	SendFIFOWords(REQ_TX_FRAME);
+	SendFIFOWords(REQ_TX_FRAME, 0xFF);
 }
 
 unsigned char * RXNextFrame(int *size){
@@ -1038,7 +1037,6 @@ void menuShow(){
 	
 	printf("Available heap memory: %d", getMaxRam());
 	printf("Button (Select): this menu. ");
-	printarm7DebugBuffer();
 }
 
 int internalCodecType = SRC_NONE;//Internal because WAV raw decompressed buffers are used if Uncompressed WAV or ADPCM
@@ -1057,10 +1055,21 @@ int main(int argc, char **argv) {
 	GUI_init(isTGDSCustomConsole);
 	GUI_clear();
 	
+	//xmalloc init removes args, so save them
+	int i = 0;
+	for(i = 0; i < argc; i++){
+		argvs[i] = argv[i];
+	}
+
 	bool isCustomTGDSMalloc = true;
 	setTGDSMemoryAllocator(getProjectSpecificMemoryAllocatorSetup(TGDS_ARM7_MALLOCSTART, TGDS_ARM7_MALLOCSIZE, isCustomTGDSMalloc, TGDSDLDI_ARM7_ADDRESS));
 	sint32 fwlanguage = (sint32)getLanguage();
 	
+	//argv destroyed here because of xmalloc init, thus restore them
+	for(i = 0; i < argc; i++){
+		argv[i] = argvs[i];
+	}
+
 	int ret=FS_init();
 	if (ret == 0)
 	{
@@ -1070,7 +1079,7 @@ int main(int argc, char **argv) {
 	{
 		printf("FS Init error.");
 	}
-	//switch_dswnifi_mode(dswifi_idlemode);
+	//switch_dswnifi_mode(dswifi_idlemode); //use custom WIFI
 	asm("mcr	p15, 0, r0, c7, c10, 4");
 	flush_icache_all();
 	flush_dcache_all();

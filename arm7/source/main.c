@@ -11,7 +11,7 @@
 #include "wifi_arm7.h"
 
 int vcount = 0;
-struct XYTscPos first, tempPos;	//touchPosition first, tempPos;
+struct touchPosition first, tempPos;
 unsigned int *RIPC;
 
 bool queues_setup=0;
@@ -187,11 +187,6 @@ int main(int argc, char **argv) {
 	while (!(*((vuint8*)0x04000240) & 0x2));
 		
 	//installWifiFIFO();		
-		
-	int argBuffer[MAXPRINT7ARGVCOUNT];
-	memset((unsigned char *)&argBuffer[0], 0, sizeof(argBuffer));
-	argBuffer[0] = 0xc070ffff;
-	writeDebugBuffer7("TGDS ARM7.bin Boot OK!", 1, (int*)&argBuffer[0]);
 		
 	/*			TGDS 1.6 Standard ARM7 Init code end	*/
 	
