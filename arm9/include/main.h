@@ -171,5 +171,6 @@ extern char *argvs[8];
 
 #define mymac my_mac
 
+#define TGDSPROJECTNAME ((char*) "ToolchainGenericDS-wmbhost")
 
 #endif
