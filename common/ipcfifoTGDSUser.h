@@ -49,6 +49,49 @@ typedef struct sIPCSharedTGDSSpecific{
 
 #define REQ_GBD_ARM7 (u32)(0xffff1988)
 
+typedef struct sTransferRegion3 {
+  //uint32 heartbeat;          // counts frames
+ 
+  unsigned char CMD;
+ // int test;
+  //int cursound;
+  //unsigned int test2;
+  //unsigned short *sounddata;
+  //unsigned short *sounddata2;
+  //unsigned short *sdx1,*sdx2;
+
+  int lastwritten;
+  
+  unsigned int sticks;
+  unsigned int lticks;
+  unsigned int cticks;
+  bool hastick;
+  
+  unsigned char *mp2pnt;
+  unsigned char *mp2pnt2;
+  unsigned int mp2size;
+  bool mp2chunk;
+  bool mp2end;
+  bool mp2needchunk;
+  
+  unsigned short *mp2bufl;
+  unsigned short *mp2bufr;
+  bool stopmp2;
+  
+  unsigned short *mp3bufl;
+  unsigned short *mp3bufr;
+  unsigned int mp3freq;
+  unsigned int mp3outbufsize;
+  
+  long signed int t1,t2,t3,t4;
+  
+} TransferRegion3, * pTransferRegion3;
+
+#define IPC3 ((TransferRegion3 volatile *)(((u32)TGDSIPCStartAddress + TGDSIPCSize)+sizeof(struct sIPCSharedTGDSSpecific)))
+#define LRIPC IPC3
+
+#define REQ_TX_FRAME (u32)(0xffff1A11)
+
 #ifdef ARM9
 static inline void initGDBSession(){
 	SendFIFOWords((u32)REQ_GBD_ARM7, 0xFF);
