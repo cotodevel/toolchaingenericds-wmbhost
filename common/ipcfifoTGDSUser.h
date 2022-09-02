@@ -33,18 +33,21 @@ USA
 #include "dsregs_asm.h"
 #include "ipcfifoTGDS.h"
 
-#define SBUFCOUNT 16
-#define SBUFSIZE  44100
+//---------------------------------------------------------------------------------
+typedef struct sIPCSharedTGDSSpecific{
+//---------------------------------------------------------------------------------
+	uint32 frameCounter7;	//VBLANK counter7
+	uint32 frameCounter9;	//VBLANK counter9
+}  IPCSharedTGDSSpecific	__attribute__((aligned (4)));
 
-#define SBUFSECS 4
-#define SFREQ 22050
-#define SBYTES 2
+//TGDS Memory Layout ARM7/ARM9 Cores
+#define TGDS_ARM7_MALLOCSTART (u32)(0x06000000)
+#define TGDS_ARM7_MALLOCSIZE (int)(96*1024)
+#define TGDSDLDI_ARM7_ADDRESS (u32)(TGDS_ARM7_MALLOCSTART + TGDS_ARM7_MALLOCSIZE)
 
-#define SSAMPLES 1152
-#define SBSIZE SSAMPLES*2
+//#define ISEMULATOR 1 //defined == TGDS Project does not self reload, undedfined == TGDS Project self reloads
 
-#define MP2BUFSIZE	1152*16
-#define MP2CHUNKSIZE 64*1024
+#define REQ_GBD_ARM7 (u32)(0xffff1988)
 
 typedef struct sTransferRegion3 {
   //uint32 heartbeat;          // counts frames
@@ -84,34 +87,9 @@ typedef struct sTransferRegion3 {
   
 } TransferRegion3, * pTransferRegion3;
 
-//---------------------------------------------------------------------------------
-typedef struct sIPCSharedTGDSSpecific{
-//---------------------------------------------------------------------------------
-	uint32 frameCounter7;	//VBLANK counter7
-	uint32 frameCounter9;	//VBLANK counter9
-}  IPCSharedTGDSSpecific	__attribute__((aligned (4)));
-
-//TGDS Memory Layout ARM7/ARM9 Cores
-#define TGDS_ARM7_MALLOCSTART (u32)(0x06000000)
-#define TGDS_ARM7_MALLOCSIZE (int)(96*1024)
-#define TGDSDLDI_ARM7_ADDRESS (u32)(TGDS_ARM7_MALLOCSTART + TGDS_ARM7_MALLOCSIZE)
-
 #define IPC3 ((TransferRegion3 volatile *)(((u32)TGDSIPCStartAddress + TGDSIPCSize)+sizeof(struct sIPCSharedTGDSSpecific)))
 #define LRIPC IPC3
 
-#define strpcmControl_NOP (0)
-#define strpcmControl_Play (1)
-#define strpcmControl_Stop (2)
-
-#define LCDPC_NOP (0)
-#define LCDPC_OFF_BOTH (1)
-#define LCDPC_ON_BOTTOM (2)
-#define LCDPC_ON_TOP_LEDON (3)
-#define LCDPC_ON_TOP_LEDBLINK (4)
-#define LCDPC_ON_BOTH (5)
-#define LCDPC_SOFT_POWEROFF (0xff)
-
-#define REQ_GBD_ARM7 (u32)(0xffff1988)
 #define REQ_TX_FRAME (u32)(0xffff1A11)
 
 #ifdef ARM9
