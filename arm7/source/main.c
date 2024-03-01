@@ -2,13 +2,14 @@
 #include "typedefsTGDS.h"
 #include "dsregs.h"
 #include "biosTGDS.h"
-#include "ipcfifoTGDSUser.h"
 #include "spitscTGDS.h"
 #include "InterruptsARMCores_h.h"
 #include <stdlib.h>
 #include "spifwTGDS.h"
 #include "posixHandleTGDS.h"
 #include "wifi_arm7.h"
+#include "dldi.h"
+#include "ipcfifoTGDSUser.h"
 
 int vcount = 0;
 struct touchPosition first, tempPos;
@@ -165,9 +166,8 @@ void MyWifi() {
 		if(WIFI_REG(0x80A8)&0x8000) { 
 			WIFI_REG(0x80AE)=0x000D; 
 		}
-		if(GDBStarted == true){
-			break;
-		}
+		
+		handleARM7SVC();	/* Do not remove, handles TGDS services */
 	}
 
 }
@@ -179,15 +179,19 @@ void initDLDIARM7(u32 srcDLDIAddr){	//stubbed
 bool GDBStarted = false;
 
 //---------------------------------------------------------------------------------
+#if (defined(__GNUC__) && !defined(__clang__))
+__attribute__((optimize("O0")))
+#endif
+#if (!defined(__GNUC__) && defined(__clang__))
+__attribute__ ((optnone))
+#endif
 int main(int argc, char **argv) {
 //---------------------------------------------------------------------------------
 	
 	/*			TGDS 1.6 Standard ARM7 Init code start	*/
-	//wait for VRAM D to be assigned from ARM9->ARM7 (ARM7 has load/store on byte/half/words on VRAM)
-	while (!(*((vuint8*)0x04000240) & 0x2));
-		
-	//installWifiFIFO();		
-		
+	//installWifiFIFO();	//custom wifi
+	while(!(*(u8*)0x04000240 & 2) ){} //wait for VRAM_D block
+	ARM7InitDLDI(TGDS_ARM7_MALLOCSTART, TGDS_ARM7_MALLOCSIZE, TGDSDLDI_ARM7_ADDRESS);
 	/*			TGDS 1.6 Standard ARM7 Init code end	*/
 	
     //Set up PPU IRQ Vertical Line
@@ -211,12 +215,6 @@ int main(int argc, char **argv) {
 	WIFI_READY = 1;
 	GDBStarted = false;
 	
-	MyWifi(); //ARM7 Loop here. Unless GDBSession begins
-	
-	while (1) {
-		handleARM7SVC();	/* Do not remove, handles TGDS services */
-		IRQWait(0, IRQ_VBLANK | IRQ_IPCSYNC | IRQ_RECVFIFO_NOT_EMPTY | IRQ_SCREENLID);
-	}
-   
+	MyWifi(); //ARM7 Loop here
 	return 0;
 }
