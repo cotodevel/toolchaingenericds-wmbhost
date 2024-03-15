@@ -11,6 +11,10 @@
 #include "dldi.h"
 #include "ipcfifoTGDSUser.h"
 
+//TGDS-MB v3 bootloader
+void bootfile(){
+}
+
 int vcount = 0;
 struct touchPosition first, tempPos;
 unsigned int *RIPC;
