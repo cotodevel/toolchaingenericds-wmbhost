@@ -23,12 +23,26 @@ USA
 
 #include "typedefsTGDS.h"
 #include "dsregs.h"
-#include "spitscTGDS.h"
+#include "pff.h"
 #include "soundTGDS.h"
+#include "exceptionTGDS.h"
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+extern int main(int argc, char **argv);
+extern FATFS fileHandle;					// Petit-FatFs work area 
+extern char fname[256];
+extern u8 NDSHeaderStruct[4096];
+extern char debugBuf7[256];
+extern bool stopSoundStreamUser();
+extern void bootfile();
+extern int isNTROrTWLBinaryTGDSMB7(FATFS * currentFH);
+
+//arm7 specific bits
 extern int main(int argc, char **argv);
 extern void Wifi_initJuglak7();
 extern unsigned char MacAddr[6];
@@ -46,6 +60,7 @@ extern unsigned int *rx_sizes,*tx_sizes;
 extern unsigned int *RIPC;
 extern void RIPC_Cmd(bool interupt);
 
+
 #ifdef __cplusplus
 }
 #endif
@@ -59,6 +74,3 @@ extern void RIPC_Cmd(bool interupt);
 #define tx_base RIPC[19]
 
 #define WIFI_READY RIPC[20]
-
-#endif
-
