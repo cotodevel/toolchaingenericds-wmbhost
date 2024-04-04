@@ -30,8 +30,14 @@ USA
 #include "dsregs.h"
 #include "dsregs_asm.h"
 #include "InterruptsARMCores_h.h"
-#include "libutilsShared.h"
+
+//libraries
 #include "microphoneShared.h"
+#include "libutilsShared.h"
+#include "wifi_shared.h"
+#ifdef ARM9
+#include "dswnifi_lib.h"
+#endif
 
 #ifdef ARM7
 #include <string.h>
@@ -66,38 +72,42 @@ void HandleFifoNotEmptyWeakRef(u32 cmd1, uint32 cmd2){
 	switch (cmd1) {
 		//NDS7: 
 		#ifdef ARM7
-		case((u32)REQ_GBD_ARM7):{
-			installWifiFIFO();
-			GDBStarted = true;
-		}
-		break;
-		case((u32)REQ_TX_FRAME):{
-			uint32 * fifomsg = (uint32 *)NDS_CACHED_SCRATCHPAD;
-			unsigned char *data = (unsigned char *)fifomsg[0]; 
-			int len = (int)fifomsg[1];
-			
-			int i;
-			for(i=0;i<12;i++) {
-				tx_queue[tx_base][i] = 0;
+		
+			#if defined(ARM7VRAMCUSTOMCORE)	
+			case((u32)REQ_GBD_ARM7):{
+				installWifiFIFO();
+				GDBStarted = true;
 			}
+			break;
+			case((u32)REQ_TX_FRAME):{
+				uint32 * fifomsg = (uint32 *)NDS_CACHED_SCRATCHPAD;
+				unsigned char *data = (unsigned char *)fifomsg[0]; 
+				int len = (int)fifomsg[1];
+				
+				int i;
+				for(i=0;i<12;i++) {
+					tx_queue[tx_base][i] = 0;
+				}
 
-			tx_queue[tx_base][8] = 0x14; // Trans rate... a=1 14=2mbit
-			
-			// Data Size
-			tx_queue[tx_base][10]	= (len+4)&0xFF;
-			tx_queue[tx_base][11]	= ((len+4)&0xFF00)>>8;
+				tx_queue[tx_base][8] = 0x14; // Trans rate... a=1 14=2mbit
+				
+				// Data Size
+				tx_queue[tx_base][10]	= (len+4)&0xFF;
+				tx_queue[tx_base][11]	= ((len+4)&0xFF00)>>8;
 
-			for(i=0;i<len;i++) {
-				tx_queue[tx_base][i+12] = data[i];
+				for(i=0;i<len;i++) {
+					tx_queue[tx_base][i+12] = data[i];
+				}
+
+				tx_sizes[tx_base] = len+16;
+				tx_base++;
+				
+				if(tx_base == 64) tx_base = 0;
+				fifomsg[1] = fifomsg[0] = 0;
 			}
-
-			tx_sizes[tx_base] = len+16;
-			tx_base++;
+			break;
+			#endif
 			
-			if(tx_base == 64) tx_base = 0;
-			fifomsg[1] = fifomsg[0] = 0;
-		}
-		break;
 		#endif
 		
 		//NDS9: 
@@ -155,7 +165,9 @@ void setupLibUtils(){
 		(SoundStreamSetupSoundARM7LibUtils_fn)&setupSound,	//ARM7: void setupSound()
 		(initMallocARM7LibUtils_fn)&initARM7Malloc, //ARM7: void initARM7Malloc(u32 ARM7MallocStartaddress, u32 ARM7MallocSize);
 		(wifiDeinitARM7ARM9LibUtils_fn)&DeInitWIFI,  //ARM7 & ARM9: DeInitWIFI()
-		(MicInterruptARM7LibUtils_fn)&micInterrupt //ARM7: micInterrupt()
+		(MicInterruptARM7LibUtils_fn)&micInterrupt, //ARM7: micInterrupt()
+		(DeInitWIFIARM7LibUtils_fn)&DeInitWIFI, //ARM7: DeInitWIFI()
+		(wifiAddressHandlerARM7LibUtils_fn)&wifiAddressHandler	//ARM7: void wifiAddressHandler( void * address, void * userdata )
 	);
 	#endif
 }
