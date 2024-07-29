@@ -40,7 +40,6 @@ extern u8 NDSHeaderStruct[4096];
 extern char debugBuf7[256];
 extern bool stopSoundStreamUser();
 extern void bootfile();
-extern int isNTROrTWLBinaryTGDSMB7(FATFS * currentFH);
 
 //arm7 specific bits
 extern int main(int argc, char **argv);
