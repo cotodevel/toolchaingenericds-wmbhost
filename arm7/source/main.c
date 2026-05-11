@@ -27,6 +27,7 @@ USA
 #include "dldi.h"
 #include "exceptionTGDS.h"
 #include "dmaTGDS.h"
+#include "TGDS_threads.h"
 
 ////////////////////////////////TGDS-MB v3 VRAM Bootcode start////////////////////////////////
 FATFS fileHandle;					// Petit-FatFs work area 
@@ -195,7 +196,9 @@ void MyWifi() {
 			WIFI_REG(0x80AE)=0x000D; 
 		}
 		
-		handleARM7SVC();	/* Do not remove, handles TGDS services */
+		bool waitForVblank = false;
+		struct task_Context * TGDSThreads = getTGDSThreadSystem();
+		int threadsRan = runThreads(TGDSThreads, waitForVblank);
 	}
 
 }
@@ -217,7 +220,7 @@ int main(int argc, char **argv) {
 	while(!(*(u8*)0x04000240 & 2) ){} //wait for VRAM_D block
 	ARM7InitDLDI(TGDS_ARM7_MALLOCSTART, TGDS_ARM7_MALLOCSIZE, TGDSDLDI_ARM7_ADDRESS);
 	SendFIFOWords(FIFO_ARM7_RELOAD, 0xFF); //ARM7 Reload OK -> acknowledge ARM9
-    /*			TGDS 1.6 Standard ARM7 Init code end	*/
+	/*			TGDS 1.6 Standard ARM7 Init code end	*/
 	
 	 //Set up PPU IRQ Vertical Line
 	setVCountIRQLine(80);
