@@ -27,6 +27,7 @@ USA
 #include "dldi.h"
 #include "defs.h"
 #include "utilsTGDS.h"
+#include "TGDS_threads.h"
 
 typedef struct sNDSHeader {
   char gameTitle[12];
@@ -168,5 +169,7 @@ extern unsigned char ackdata[];
 #define WIFI_READY RIPC[20]
 
 #define mymac my_mac
+
+extern struct task_Context * internalTGDSThreads;
 
 #endif

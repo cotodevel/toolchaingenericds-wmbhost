@@ -142,8 +142,8 @@ compile	:
 	$(MAKE)	-R	-C	$(DIR_ARM7)/
 	$(MAKE)	-R	-C	$(CURDIR)/common/templateCode/arm7bootldr/
 	
-	-mv $(DIR_ARM7)/arm7vram.bin	$(DIR_ARM9)/data/arm7vram.bin
-	-mv $(DIR_ARM7)/arm7vram_twl.bin	$(DIR_ARM9)/data/arm7vram_twl.bin
+	-mv $(DIR_ARM7)/arm7vram.bin	$(DIR_ARM9)/data/arm7vram.binlzss
+	-mv $(DIR_ARM7)/arm7vram_twl.bin	$(DIR_ARM9)/data/arm7vram_twl.binlzss
 	
 ifeq ($(SOURCE_MAKEFILE9),default)
 	cp	-r	$(TARGET_LIBRARY_MAKEFILES_SRC9_NOFPIC)	$(CURDIR)/$(DIR_ARM9)
@@ -151,7 +151,7 @@ endif
 	$(MAKE)	-R	-C	$(DIR_ARM9)/
 $(EXECUTABLE_FNAME)	:	compile
 	-@echo 'ndstool begin'
-	$(NDSTOOL)	-v	-c $@	-7  $(CURDIR)/common/templateCode/stage1_7/$(BINSTRIP_RULE_7)	-e7  0x02380000	-9 $(CURDIR)/arm9/$(BINSTRIP_RULE_9) -e9  0x02000800	-r9 0x02000000	-b	icon.bmp "ToolchainGenericDS SDK;$(TGDSPROJECTNAME) NDS Binary; "
+	$(NDSTOOL)	-v	-c $@	-7  $(CURDIR)/common/templateCode/stage1_7/$(BINSTRIP_RULE_7)	-e7  0x02380000	-9 $(CURDIR)/arm9/$(BINSTRIP_RULE_9) -e9  0x02000800	-r9 0x02000000	-g "TGDS" "NN" "NDS.TinyFB"	-b	icon.bmp "ToolchainGenericDS SDK;$(TGDSPROJECTNAME) NDS Binary; "
 	$(NDSTOOL)	-c 	${@:.nds=.srl} -7  $(CURDIR)/common/templateCode/stage1_7/arm7_twl.bin	-e7  0x02380000	-9 $(CURDIR)/arm9/arm9_twl.bin -e9  0x02000800	-r9 0x02000000	\
 	-g "TGDS" "NN" "NDS.TinyFB"	\
 	-z 80040000 -u 00030004 -a 00000138 \
@@ -178,7 +178,7 @@ endif
 	-@rm -rf $(CURDIR)/$(PosIndCodeDIR_FILENAME)/$(DIR_ARM7)/Makefile
 	-@rm -rf $(CURDIR)/$(PosIndCodeDIR_FILENAME)/$(DIR_ARM9)/Makefile
 	-@rm -fr $(EXECUTABLE_FNAME)	$(TGDSPROJECTNAME).srl	$(CURDIR)/common/templateCode/
-	-@rm -rf $(CURDIR)/$(DIR_ARM7)/Makefile	$(DIR_ARM9)/data/arm7vram.bin	$(DIR_ARM9)/data/arm7vram_twl.bin
+	-@rm -rf $(CURDIR)/$(DIR_ARM7)/Makefile	$(DIR_ARM9)/data/arm7vram.binlzss	$(DIR_ARM9)/data/arm7vram_twl.binlzss
 
 rebase:
 	git reset --hard HEAD
